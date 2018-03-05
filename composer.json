@@ -1,0 +1,17 @@
+{
+  "name": "drupal/ckan_connect",
+  "description": "The CKAN Connect module is utilised by dvf_ckan to connect to CKAN.",
+  "type": "drupal-module",
+  "homepage": "http://drupal.org/project/ckan_connect",
+  "authors": [
+    {
+      "name": "Jorge Castro",
+      "homepage": "https://www.drupal.org/u/jorgegc"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/ckan_connect"
+  },
+  "license": "GPL-2.0+",
+  "require": { }
+}
