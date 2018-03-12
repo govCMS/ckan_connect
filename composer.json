@@ -1,6 +1,6 @@
 {
-  "name": "drupal/ckan_connect",
-  "description": "The CKAN Connect module is utilised by dvf_ckan to connect to CKAN.",
+  "name": "govcms/ckan_connect",
+  "description": "Drupal 8 Module to connect to a CKAN endpoint providing a wrapper around the CKAN Action API",
   "type": "drupal-module",
   "homepage": "http://drupal.org/project/ckan_connect",
   "authors": [
@@ -13,5 +13,8 @@
     "issues": "https://www.drupal.org/project/issues/ckan_connect"
   },
   "license": "GPL-2.0+",
+  "version": "0.0.1",
+  "minimum-stability": "alpha",
+  "prefer-stable": true,
   "require": { }
 }
