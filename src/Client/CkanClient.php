@@ -140,9 +140,9 @@ class CkanClient implements CkanClientInterface {
    *
    * @return mixed|\stdClass|string
    */
-  public function action(CkanApiInterface $ckanObject, $action = NULL) {
-    $path = 'action/' . $ckanObject->getActionSlug($action);
-    $parameters = $ckanObject->getParameters($action);
+  public function action(CkanApiInterface $ckanObject) {
+    $path = 'action/' . $ckanObject->getPath();
+    $parameters = $ckanObject->getParameters();
 
     // Every action API endpoint on CKAN may be used with a POST request.
     return $this->post($path, $parameters);

@@ -1,6 +1,8 @@
 <?php
 
-namespace Drupal\ckan_connect\Ckan;
+namespace Drupal\ckan_connect\Ckan\Crud;
+
+use Drupal\ckan_connect\Ckan\CkanApiInterface;
 
 /**
  * Interface CkanCrudInterface

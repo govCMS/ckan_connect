@@ -1,8 +1,6 @@
 <?php
 
-namespace Drupal\ckan_connect\Ckan\Service;
-
-use Drupal\ckan_connect\Ckan\CkanApiBase;
+namespace Drupal\ckan_connect\Ckan;
 
 /**
  * Class CkanServiceBase

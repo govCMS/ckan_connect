@@ -3,7 +3,6 @@
 namespace Drupal\ckan_connect\Ckan\Crud;
 
 use Drupal\ckan_connect\Ckan\CkanApiBase;
-use Drupal\ckan_connect\Ckan\CkanCrudInterface;
 use Drupal\ckan_connect\Client\CkanClient;
 
 /**

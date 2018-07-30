@@ -24,7 +24,7 @@ construction method, or separately via `CkanApiInterface::setParameters($paramet
 ```php
 <?php
 
-use Drupal\ckan_connect\Ckan\Service\CkanRequest;
+use Drupal\ckan_connect\Ckan\CkanRequest;
 
 //...
 
