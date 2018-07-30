@@ -17,8 +17,6 @@ class CkanClient implements CkanClientInterface {
   const CKAN_ACTION_UPDATE = 'update';
   const CKAN_ACTION_PATCH  = 'patch';
   const CKAN_ACTION_DELETE = 'delete';
-  const CKAN_ACTION_CLEAR  = 'clear';
-  const CKAN_ACTION_PURGE  = 'purge';
 
   /**
    * The HTTP client.
