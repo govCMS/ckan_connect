@@ -4,6 +4,7 @@ namespace Drupal\ckan_connect\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -77,10 +78,7 @@ class CkanConnectSettingsForm extends ConfigFormBase {
     $api_key = $form_state->getValue(['api', 'key']);
 
     if (!empty($api_key)) {
-      /** @var \Drupal\Core\File\FileSystem $file_system */
-      $file_system = \Drupal::service('file_system');
-
-      if ($file_system->uriScheme($api_url) !== 'https') {
+      if (StreamWrapperManager::getScheme($api_url) !== 'https') {
         $form_state->setErrorByName('api_url', $this->t('If using an API key, the API URL must use HTTPS.'));
       }
     }
