@@ -62,7 +62,7 @@ class CkanResourceUrlParser implements CkanResourceUrlParserInterface {
       parse_str($options['query'], $query_string);
     }
 
-    //Get the resource_id from the query string or parse the url to get the resource_id
+    // Get the resource_id from the query string or parse the url to get the resource_id.
     if(!empty($query_string['resource_id'])){
       $options = [
         'resource_id' => $query_string['resource_id']
