@@ -2,6 +2,7 @@
 
 namespace Drupal\ckan_connect\Client;
 
+use Drupal\ckan_connect\Ckan\CkanApiInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\Client;
 
@@ -9,6 +10,13 @@ use GuzzleHttp\Client;
  * Provides a CKAN client.
  */
 class CkanClient implements CkanClientInterface {
+
+  const CKAN_ACTION_LIST   = 'list';
+  const CKAN_ACTION_SHOW   = 'show';
+  const CKAN_ACTION_CREATE = 'create';
+  const CKAN_ACTION_UPDATE = 'update';
+  const CKAN_ACTION_PATCH  = 'patch';
+  const CKAN_ACTION_DELETE = 'delete';
 
   /**
    * The HTTP client.
@@ -89,18 +97,55 @@ class CkanClient implements CkanClientInterface {
   /**
    * {@inheritdoc}
    */
-  public function get($path, array $query = []) {
+  public function get($path, array $parameters = []) {
     $uri = $this->getApiUrl() . '/' . $path;
-    $options = ['query' => $query];
+    $options = ['query' => $parameters];
 
     if ($this->getApiKey()) {
       $options['headers']['Authorization'] = $this->getApiKey();
     }
 
-    $response = $this->httpClient->get($uri, $options)->getBody()->getContents();
+    $response = $this->httpClient->get($uri, $options)
+      ->getBody()
+      ->getContents();
     $response = json_decode($response);
 
     return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function post($path, array $parameters) {
+    $uri = $this->getApiUrl() . '/' . $path;
+    $options = ['form_params' => $parameters];
+
+    if ($this->getApiKey()) {
+      $options['headers']['Authorization'] = $this->getApiKey();
+    }
+
+    $response = $this->httpClient->post($uri, $options)
+      ->getBody()
+      ->getContents();
+    $response = json_decode($response);
+
+    return $response;
+  }
+
+  /**
+   * Send an action query to the API.
+   *
+   * @param string $action
+   * @param \Drupal\ckan_connect\Ckan\CkanApiInterface $ckanObject
+   *
+   * @return mixed|\stdClass|string
+   */
+  public function action(CkanApiInterface $ckanObject) {
+    $path = 'action/' . $ckanObject->getPath();
+    $parameters = $ckanObject->getParameters();
+
+    // Every action API endpoint on CKAN may be used with a POST request.
+    return $this->post($path, $parameters);
   }
 
 }
