@@ -14,7 +14,8 @@ class CkanResourceUrlParser implements CkanResourceUrlParserInterface {
   /**
    * Regex to check whether a CKAN resource path is valid.
    */
-  const CKAN_RESOURCE_PATH_REGEX = '/^\/dataset\/.*\/resource\/[^\/]+$/';
+  const CKAN_RESOURCE_PATH_REGEX = '/(?:resource\/|resource_id=)([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/';
+  const CKAN_PACKAGE_PATH_REGEX = '/(?:dataset\/|package_id=)([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/';
 
   /**
    * The CKAN client.
@@ -47,19 +48,17 @@ class CkanResourceUrlParser implements CkanResourceUrlParserInterface {
    * {@inheritdoc}
    */
   public function parse($url) {
-    $options = parse_url($url);
-    $path = !empty($options['path']) ? $options['path'] : '';
-
-    if (!preg_match(self::CKAN_RESOURCE_PATH_REGEX, $path)) {
-      return FALSE;
+    if (!preg_match(self::CKAN_RESOURCE_PATH_REGEX, $url, $matches)) {
+      if (empty($matches[1])) {
+        return FALSE;
+      }
     }
+    $options['resource_id'] = $matches[1];
 
-    // Expected format /dataset/PACKAGE_ID/resource/RESOURCE_ID.
-    $parts = explode('/', $options['path'], 5);
-    $options = [
-      'package_id' => $parts[2],
-      'resource_id' => $parts[4],
-    ];
+    preg_match(self::CKAN_PACKAGE_PATH_REGEX, $url, $matches);
+    if (!empty($matches[1])) {
+      $options['package_id'] = $matches[1];
+    }
 
     return $options;
   }
