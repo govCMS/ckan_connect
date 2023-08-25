@@ -50,6 +50,8 @@ class CkanResourceUrlParser implements CkanResourceUrlParserInterface {
   public function parse($url) {
     if (!preg_match(self::CKAN_RESOURCE_PATH_REGEX, $url, $matches)) {
       if (empty($matches[1])) {
+        $this->logger->error("Invalid resource path. The url $url MUST contain either a resource/ or resource_id=.");
+
         return FALSE;
       }
     }

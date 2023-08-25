@@ -2,15 +2,43 @@
 
 namespace Drupal\ckan_connect\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\ckan_connect\Client\CkanClientInterface;
 
 /**
  * Configures CKAN Connect settings for this site.
  */
 class CkanConnectSettingsForm extends ConfigFormBase {
+
+  /**
+   * The ckan client.
+   *
+   * @var \Drupal\ckan_connect\Client\CkanClientInterface
+   */
+  protected $ckanClient;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, CkanClientInterface $ckanClient) {
+    parent::__construct($config_factory);
+    $this->ckanClient = $ckanClient;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('ckan_connect.client')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -48,8 +76,8 @@ class CkanConnectSettingsForm extends ConfigFormBase {
 
     $form['api']['key'] = [
       '#type' => 'textfield',
-      '#title' => t('API Key'),
-      '#description' => t('Optionally specify an API key.'),
+      '#title' => $this->t('API Key'),
+      '#description' => $this->t('Optionally specify an API key.'),
       '#default_value' => $config->get('api.key'),
     ];
 
@@ -73,13 +101,16 @@ class CkanConnectSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  protected function validateApiUrl(array &$form, FormStateInterface $form_state) {
+  public function validateApiUrl(array &$form, FormStateInterface $form_state) {
     $api_url = $form_state->getValue(['api', 'url']);
     $api_key = $form_state->getValue(['api', 'key']);
 
     if (!empty($api_key)) {
       if (StreamWrapperManager::getScheme($api_url) !== 'https') {
-        $form_state->setErrorByName('api_url', $this->t('If using an API key, the API URL must use HTTPS.'));
+        $message = $this->t('If using an API key, the API URL must use HTTPS.');
+
+        $this->logger('ckan_connect')->error($message);
+        $form_state->setErrorByName('api_url', $message);
       }
     }
   }
@@ -92,36 +123,41 @@ class CkanConnectSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  protected function validateApiKey(array &$form, FormStateInterface $form_state) {
+  public function validateApiKey(array &$form, FormStateInterface $form_state) {
     $api_url = $form_state->getValue(['api', 'url']);
     $api_key = $form_state->getValue(['api', 'key']);
 
     try {
-      /** @var \Drupal\ckan_connect\Client\CkanClientInterface $client */
-      $client = \Drupal::service('ckan_connect.client');
-      $client->setApiUrl($api_url);
+      $this->ckanClient->setApiUrl($api_url);
 
       if ($api_key) {
-        $client
+        $this->ckanClient
           ->setApiKey($api_key)
           ->get('action/dashboard_activity_list', ['limit' => 1]);
       }
       else {
-        $client->get('action/site_read');
+        $this->ckanClient->get('action/site_read');
       }
     }
     catch (RequestException $e) {
       $response = $e->getResponse();
       $status_code = $response->getStatusCode();
+      $message = '';
 
       switch ($status_code) {
         case 403:
-          $form_state->setErrorByName('api_url', $this->t('API return "Not Authorised" please check your API key.'));
+          $message = $this->t('API return "Not Authorised" please check your API key.');
+          $form_state->setErrorByName('api_url', $message);
           break;
 
         default:
-          $form_state->setErrorByName('api_url', $this->t('Could not establish a connection to the endpoint. Error: @code', ['@code' => $status_code]));
+          $message = $this->t('Could not establish a connection to the endpoint. Error: @code', ['@code' => $status_code]);
+          $form_state->setErrorByName('api_url', $message);
       }
+
+      $this->logger('ckan_connect')->error("$message @message", [
+        '@message' => $e->getMessage(),
+      ]);
     }
   }
 
