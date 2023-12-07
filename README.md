@@ -83,6 +83,20 @@ if ($response->success === TRUE) {
 View the [CKAN API docs](https://docs.ckan.org/en/2.9/api/) for more information on available endpoints
 and query parameters.
 
+## Running Test
+Refer to instructions on [Running PHPUnit tests](https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/running-phpunit-tests) from the official Drupal documentation.
+All dvf tests belong to the group ckan_connect so you can run all tests locally using something like
+
+```
+vendor/bin/phpunit --group=ckan_connect
+```
+### Running a specific Test function
+To limit tests to a unique function run something like:
+```
+vendor/bin/phpunit --testsuite=ckan_connect --filter=testParserDoesNotRecognizeInvalidUrls
+```
+
+
 ## Issues and feature suggestions
 
 Development of CKAN Connect is currently occurring over at [GitHub](https://github.com/govCMS/ckan_connect)

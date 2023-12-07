@@ -58,14 +58,17 @@ class CkanConnectSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // Retrieve the CKAN Connect configuration object.
     $config = $this->config('ckan_connect.settings');
 
+    // Define form elements for API settings within a fieldset.
     $form['api'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('API settings'),
       '#tree' => TRUE,
     ];
 
+    // Define a textfield for API URL with default value from configuration.
     $form['api']['url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('API URL'),
@@ -74,6 +77,7 @@ class CkanConnectSettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    // Define a textfield for API Key.
     $form['api']['key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('API Key'),
@@ -102,13 +106,16 @@ class CkanConnectSettingsForm extends ConfigFormBase {
    *   The form state.
    */
   public function validateApiUrl(array &$form, FormStateInterface $form_state) {
+    // Retrieve API URL and API key from the form state.
     $api_url = $form_state->getValue(['api', 'url']);
     $api_key = $form_state->getValue(['api', 'key']);
 
+    // Check if an API key is provided.
     if (!empty($api_key)) {
+      // Ensure the API URL uses HTTPS when an API key is present.
       if (StreamWrapperManager::getScheme($api_url) !== 'https') {
+        // Log an error message and set a form error if HTTPS is not used.
         $message = $this->t('If using an API key, the API URL must use HTTPS.');
-
         $this->logger('ckan_connect')->error($message);
         $form_state->setErrorByName('api_url', $message);
       }
@@ -128,8 +135,10 @@ class CkanConnectSettingsForm extends ConfigFormBase {
     $api_key = $form_state->getValue(['api', 'key']);
 
     try {
+      // Set the CKAN client's API URL based on the provided form state value.
       $this->ckanClient->setApiUrl($api_url);
 
+      // Make a CKAN API request based on whether an API key is provided.
       if ($api_key) {
         $this->ckanClient
           ->setApiKey($api_key)
@@ -140,6 +149,7 @@ class CkanConnectSettingsForm extends ConfigFormBase {
       }
     }
     catch (RequestException $e) {
+      // Handle exceptions, retrieve response status code and set appropriate form errors.
       $response = $e->getResponse();
       $status_code = $response->getStatusCode();
       $message = '';
@@ -155,6 +165,7 @@ class CkanConnectSettingsForm extends ConfigFormBase {
           $form_state->setErrorByName('api_url', $message);
       }
 
+      // Log the error message along with additional details.
       $this->logger('ckan_connect')->error("$message @message", [
         '@message' => $e->getMessage(),
       ]);
@@ -165,12 +176,15 @@ class CkanConnectSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Retrieve the CKAN Connect configuration object.
     $config = $this->config('ckan_connect.settings');
+    // Set and save the API URL and API key values from the form state into the configuration.
     $config
       ->set('api.url', $form_state->getValue(['api', 'url']))
       ->set('api.key', $form_state->getValue(['api', 'key']));
     $config->save();
 
+    // Invoke the parent class's submitForm method for additional processing.
     parent::submitForm($form, $form_state);
   }
 
