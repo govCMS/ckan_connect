@@ -1,6 +1,6 @@
 # CKAN Connect
 
-CKAN connect is a [Drupal 8/9](https://www.drupal.org/project/ckan_connect) companion module for the
+CKAN connect is a [Drupal 8/9/10](https://www.drupal.org/project/ckan_connect) companion module for the
 [Data Visualisation Framework (DVF)](https://github.com/govCMS/dvf) module. Its goal is to provide
 [CKAN](https://ckan.org/) connectivity and abstract API calls. Other modules can use CKAN connect
 if they need CKAN connectivity from Drupal and it does not require DVF to function.
@@ -35,7 +35,7 @@ Once installed you must set the Base URL for the CKAN instance.
 * Set the API url to match your CKAN instance eg. `https://data.gov.au/api/3`
 * If you need write access to CKAN or you need to view private datasets then you can also
   add an API key. Note the security implications here, you could potentially expose private
-  data on your Drupal site when an API key is used
+  data on your Drupal site when an API key is used.
 
 ## CKAN Connect API
 
@@ -83,6 +83,20 @@ if ($response->success === TRUE) {
 View the [CKAN API docs](https://docs.ckan.org/en/2.9/api/) for more information on available endpoints
 and query parameters.
 
+## Running Test
+Refer to instructions on [Running PHPUnit tests](https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/running-phpunit-tests) from the official Drupal documentation.
+All dvf tests belong to the group ckan_connect so you can run all tests locally using something like
+
+```
+vendor/bin/phpunit --group=ckan_connect
+```
+### Running a specific Test function
+To limit tests to a unique function run something like:
+```
+vendor/bin/phpunit --testsuite=ckan_connect --filter=testParserDoesNotRecognizeInvalidUrls
+```
+
+
 ## Issues and feature suggestions
 
 Development of CKAN Connect is currently occurring over at [GitHub](https://github.com/govCMS/ckan_connect)
@@ -92,8 +106,9 @@ but we also monitor the [Drupal issue queue](https://www.drupal.org/project/ckan
 
 ## Contributing and extending CKAN Connect
 
-We welcome (and appreciate) improvements and fixes to CKAN Connect, so if you have something to add
-please submit a [Github pull request](https://github.com/govCMS/ckan_connect/pulls).
+We welcome (and appreciate) improvements and fixes to CKAN Connect, so if you
+have something to add please submit a
+[Github pull request](https://github.com/govCMS/ckan_connect/pulls).
 
 ## Supporting organizations
 

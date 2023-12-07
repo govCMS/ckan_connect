@@ -2,4 +2,4 @@ name: CKAN Connect
 description: 'Connect to a CKAN endpoint providing a wrapper around the CKAN Action API.'
 type: module
 package: CKAN
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10

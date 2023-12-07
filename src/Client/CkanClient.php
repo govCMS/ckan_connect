@@ -90,13 +90,17 @@ class CkanClient implements CkanClientInterface {
    * {@inheritdoc}
    */
   public function get($path, array $query = []) {
+    // Construct the full URI by combining the API URL and the specified path.
     $uri = $this->getApiUrl() . '/' . $path;
+    // Set options for the HTTP request, including any query parameters.
     $options = ['query' => $query];
 
+    // Include the API key in the request headers if it is available.
     if ($this->getApiKey()) {
       $options['headers']['Authorization'] = $this->getApiKey();
     }
 
+    // Make an HTTP GET request using the configured HTTP client and retrieve the response body.
     $response = $this->httpClient->get($uri, $options)->getBody()->getContents();
     $response = json_decode($response);
 
