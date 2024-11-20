@@ -1,4 +1,4 @@
-# CKAN Connect
+# CKAN Connect - ARCHIVED
 
 CKAN connect is a [Drupal 8/9](https://www.drupal.org/project/ckan_connect) companion module for the
 [Data Visualisation Framework (DVF)](https://github.com/govCMS/dvf) module. Its goal is to provide
