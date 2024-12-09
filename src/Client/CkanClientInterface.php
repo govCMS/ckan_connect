@@ -46,16 +46,29 @@ interface CkanClientInterface {
   public function setApiKey($api_key);
 
   /**
-   * Get data from the CKAN endpoint.
+   * Get data from a CKAN endpoint.
    *
    * @param string $path
    *   The path of the action.
-   * @param array $query
+   * @param array $parameters
    *   The key pair parameters.
    *
    * @return \stdClass
    *   A response object.
    */
-  public function get($path, array $query = []);
+  public function get($path, array $parameters = []);
+
+  /**
+   * Post data to a CKAN endpoint.
+   *
+   * @param string $path
+   *   The path of the action.
+   * @param array $parameters
+   *   The key pair parameters.
+   *
+   * @return \stdClass
+   *   A response object.
+   */
+  public function post($path, array $parameters);
 
 }
